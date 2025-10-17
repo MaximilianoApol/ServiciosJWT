@@ -3,60 +3,41 @@ package com.example.Marketing.service;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.Marketing.dto.PublicationRequest;
+import com.example.Marketing.dto.PublicationResponse;
 
-import jakarta.transaction.Transactional;
+public interface PublicationService {
 
-import com.example.Marketing.model.Publication;
-import com.example.Marketing.repository.PublicationRepository;
+	List<PublicationResponse> findAll();
 
-@Service
-@Transactional
-public class PublicationService {
+	List<PublicationResponse> findAll(int page, int pageSize);
 
-	@Autowired
-	private PublicationRepository repository;
+	PublicationResponse findById(Integer publicationId);
 
-	public List<Publication> getAll() {
-		return repository.findAll();
-	}
+	PublicationResponse create(PublicationRequest request);
 
-	public Publication getById(Integer idPublication) {
-		return repository.findById(idPublication).orElse(null);
-	}
+	PublicationResponse update(Integer publicationId, PublicationRequest request);
 
-	public Publication save(Publication publication) {
-		return repository.save(publication);
-	}
+	void delete(Integer publicationId);
 
-	// ---- Consultas Especializadas ----
+	// Consultas especializadas
+	List<PublicationResponse> getHighRiskNegativeInfluencers();
 
-	public List<Publication> getHighRiskNegativeInfluencers() {
-		return repository.findHighRiskNegativeInfluencers();
-	}
+	Long countNegativePublicationsByCampaign(Integer campaignId, OffsetDateTime startTime);
 
-	public Long countNegativePublicationsByCampaign(Integer campaignId, OffsetDateTime startTime) {
-		return repository.countNegativePublicationsByCampaign(campaignId, startTime);
-	}
+	List<PublicationResponse> getPotentialViral();
 
-	public List<Publication> getPotentialViral() {
-		return repository.findPotentialViral();
-	}
+	List<PublicationResponse> getCrossMentions(String brand, String competitorA, String competitorB);
 
-	public List<Publication> getCrossMentions(String brand, String competitorA, String competitorB) {
-		return repository.findCrossMentions(brand, competitorA, competitorB);
-	}
+	List<PublicationResponse> getSpamLowFollowers(String keyword1, String keyword2, String keyword3);
 
-	public List<Publication> getSpamLowFollowers() {
-		return repository.findSpamLowFollowers("sorteo", "giveaway", "sígueme y te sigo");
-	}
+	List<PublicationResponse> getSupportTickets(String word1, String word2, String word3, String word4);
 
-	public List<Publication> getSupportTickets() {
-		return repository.findSupportTickets("ayuda", "no funciona", "problema", "dónde está mi pedido");
-	}
+	List<PublicationResponse> getManualReviewNeeded(String symbol);
 
-	public List<Publication> getManualReviewNeeded() {
-		return repository.findManualReviewNeeded("?");
-	}
+	List<PublicationResponse> findByCampaignId(Integer campaignId);
+
+	List<PublicationResponse> findByAuthorId(Integer authorId);
+
+	List<PublicationResponse> findByDateRange(OffsetDateTime startDate, OffsetDateTime endDate);
 }

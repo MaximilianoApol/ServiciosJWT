@@ -1,51 +1,37 @@
 package com.example.Marketing.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.Marketing.dto.TextAnalysisRequest;
+import com.example.Marketing.dto.TextAnalysisResponse;
 
-import com.example.Marketing.model.TextAnalysis;
-import com.example.Marketing.repository.TextAnalysisRepository;
+public interface TextAnalysisService {
 
-@Service
-@Transactional
-public class TextAnalysisService {
+	List<TextAnalysisResponse> findAll();
 
-	@Autowired
-	private TextAnalysisRepository repository;
+	List<TextAnalysisResponse> findAll(int page, int pageSize);
 
-	public List<TextAnalysis> getAll() {
-		return repository.findAll();
-	}
+	TextAnalysisResponse findById(Integer textAnalysisId);
 
-	public TextAnalysis getById(Integer id) {
-		return repository.findById(id).orElse(null);
-	}
+	TextAnalysisResponse findByPublicationId(Integer publicationId);
 
-	public TextAnalysis save(TextAnalysis analysis) {
-		return repository.save(analysis);
-	}
+	TextAnalysisResponse create(TextAnalysisRequest request);
 
-	public void delete(Integer id) {
-		repository.deleteById(id);
-	}
+	TextAnalysisResponse update(Integer textAnalysisId, TextAnalysisRequest request);
+
+	void delete(Integer textAnalysisId);
 
 	// Consultas especializadas
-	public List<TextAnalysis> getPotentialViralContent() {
-		return repository.findPotentialViralContent();
-	}
+	List<TextAnalysisResponse> getPotentialViralContent();
 
-	public List<TextAnalysis> getCrossMention(String brand, String competitorA, String competitorB) {
-		return repository.findCrossMention(brand, competitorA, competitorB);
-	}
+	List<TextAnalysisResponse> getCrossMention(String brand, String competitorA, String competitorB);
 
-	public List<TextAnalysis> getSupportTickets() {
-		return repository.findSupportTickets("ayuda", "no funciona", "problema", "dónde está mi pedido");
-	}
+	List<TextAnalysisResponse> getSupportTickets(String keyword1, String keyword2, String keyword3, String keyword4);
 
-	public List<TextAnalysis> getMixedOrQuestionPosts() {
-		return repository.findMixedOrQuestionPosts("?");
-	}
+	List<TextAnalysisResponse> getMixedOrQuestionPosts(String symbol);
+
+	List<TextAnalysisResponse> findBySentiment(String sentiment);
+
+	List<TextAnalysisResponse> findHighCrisisScore(BigDecimal threshold);
 }
