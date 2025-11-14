@@ -1,41 +1,50 @@
-package com.example.Marketing.mapper;
+package com.example.marketing.mapper;
 
-import com.example.Marketing.model.UserRole;
-import com.example.Marketing.model.User;
-import com.example.Marketing.model.Role;
-import com.example.Marketing.dto.UserRoleRequest;
-import com.example.Marketing.dto.UserRoleResponse;
+import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import com.example.marketing.dto.UserLoginRequest;
+import com.example.marketing.dto.UserLoginResponse;
+import com.example.marketing.model.User;
 
-@Component
-public class UserLoginMapper {
+public final class UserLoginMapper {
 
+	/**
+	 * Convierte User entity a UserLoginResponse DTO
+	 */
+	public static UserLoginResponse toResponse(User user) {
+		if (user == null) return null;
 
-	public UserRoleResponse toResponse(UserRole userRole) {
-		if (userRole == null) return null;
-
-		UserRoleResponse response = new UserRoleResponse();
-		response.setUserRoleId(userRole.getUserRoleId());
-		response.setUserId(userRole.getUser() != null ? userRole.getUser().getUserId() : null);
-		response.setRoleId(userRole.getRole() != null ? userRole.getRole().getRoleId() : null);
-		return response;
+		return UserLoginResponse.builder()
+				.userId(user.getUserId())
+				.email(user.getEmail())
+				.fullName(user.getFullName())
+				.roles(user.getRoles() != null
+						? user.getRoles().stream()
+						.map(role -> role.getRoleName())
+						.collect(Collectors.toList())
+						: null)
+				.build();
 	}
 
+	/**
+	 * Convierte UserLoginRequest DTO a User entity
+	 */
+	public static User toEntity(UserLoginRequest dto) {
+		if (dto == null) return null;
 
-	public UserRole toEntity(UserRoleRequest request, User user, Role role) {
-		if (request == null) return null;
-
-		UserRole userRole = new UserRole();
-		userRole.setUser(user);
-		userRole.setRole(role);
-		return userRole;
+		User user = User.builder()
+				.email(dto.getEmail())
+				.passwordHash(dto.getPassword())
+				.build();
+		return user;
 	}
 
-	public void updateEntity(UserRole userRole, User user, Role role) {
-		if (userRole == null) return;
-
-		userRole.setUser(user);
-		userRole.setRole(role);
+	/**
+	 * Copia datos de UserLoginRequest a User entity existente
+	 */
+	public static void copyToEntity(UserLoginRequest dto, User entity) {
+		if (dto == null || entity == null) return;
+		entity.setEmail(dto.getEmail());
+		entity.setPasswordHash(dto.getPassword());
 	}
 }
